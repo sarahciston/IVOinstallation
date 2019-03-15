@@ -4,6 +4,9 @@
 import json
 import requests
 from datetime import datetime
+import time
+import random
+import os
 
 #GraphQL Database
 from graphqlclient import GraphQLClient
@@ -20,12 +23,30 @@ import sys
 KEYWORD = 'brain'
 
 #also modify file to show that it was accessed
-#also add features to play the file once grabbed
 #also add randomizer
 #also add sentiment analysis
 
-def gqlGetOrdered():
-    result = client.execute('''
+def gqlGetAll():
+    results = client.execute('''
+    query {
+        allFiles(
+            filter: {
+                file2: null
+            }) {
+                id
+                name
+                url
+                text
+            }
+        }
+    ''')
+    #print(results)
+    #select random from this: result = #or do below in __main__
+    #results = random.choice(d.)
+    return results
+
+def gqlGetLast():
+    results = client.execute('''
     query {
         allFiles(
             last: 1
@@ -36,10 +57,11 @@ def gqlGetOrdered():
                 id
                 name
                 url
+                text
             }
         }
     ''')
-    return result
+    return results
 
 #QUERY TO GET FILE2_URL, searches by keyword and looks only for lyrebird converted files (file2null)
 def gqlGetKeyword():
@@ -47,7 +69,7 @@ def gqlGetKeyword():
     variables = json.dumps(variables)
     variables = str(variables)
     #makes the query call with variables and returns results
-    result = client.execute('''
+    results = client.execute('''
     query ($text: String){
         allFiles(filter: {
             AND: [{
@@ -59,35 +81,22 @@ def gqlGetKeyword():
             id
             name
             url
+            text
         }
     }
     ''', variables)
-    return result
-
-###CHOOSE HERE WHETHER TO RUN AN ORDERED QUERY OR A KEYWORD QUERY, HOW TO RANDOM QUERY?
-#result = gqlGetOrdered()
-result = gqlGetKeyword()
-
-result = json.loads(result)
-result = result['data']
-result = result['allFiles']
-result = result[0]
-FILE2_ID = result['id']
-FILE2_NAME = result['name']
-FILE2_URL = result['url']
-#FILE2_TEXT = result['text']
-#print(FILE2_ID, FILE2_NAME, FILE2_URL)
+    return results
 
 #updates DB with STT text field
 def gqlMutateText(fid):
     #sets any variables to pass to query, packs all the variables into a JSON, to feed to the GQLdb
     acc = datetime.now().replace(microsecond=0).isoformat() #.strftime("%m/%d/%Y, %I:%M:%S %p")
-    print(acc)
+    #print(acc)
     variables = {"id": fid, "accessedAt": acc}
     variables = json.dumps(variables)
     variables = str(variables)
     #makes the query call with variables and returns results
-    result = client.execute('''
+    results = client.execute('''
     mutation ($id: ID!, $accessedAt: [DateTime!]) {
         updateFile(
             id: $id
@@ -101,18 +110,15 @@ def gqlMutateText(fid):
     }
     ''', variables) # , ) do i add variables here, a dictionary/string of them?
     #print("added text to DB")
-    print(result)
-    return result
+    #print(results)
+    return results
 
-gqlMutateText(FILE2_ID)
 
 #download TTS Lyrebird file
 def getFile(furl, fname):
     r = requests.get(furl, allow_redirects=True)
     results = open('Play/' + fname, 'wb').write(r.content) #creates a file from the url downloaded
     return results
-
-getFile(FILE2_URL, FILE2_NAME)
 
 #play file
 def playFile(fname):
@@ -121,23 +127,65 @@ def playFile(fname):
     #    print('plays a wave file. usage: %s filename.wav' % sys.argv[0])
     #wf = wave.open(sys.argv[1], 'rb')
     wf = wave.open('Play/' + fname, 'rb')
+    #print("opened wave")
     p = pyaudio.PyAudio()
     stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                 channels=wf.getnchannels(),
                 rate=wf.getframerate(),
                 #num_frames=wf.getnframes(),
                 output=True)
+    #print("made stream")
     data = wf.readframes(CHUNK)
-    while data != '':
+    #print("chunks read")
+    while len(data) > 0:
+        #print("while loop")
         stream.write(data, exception_on_underflow=False)
+        #print("stream wrote")
         data = wf.readframes(CHUNK)
+        #print("read frames")
+        #HERE IS WHERE IT IS GETTING STUCK!!!!!
+    #print("finished while data")
     stream.stop_stream()
+    #print("stopped stream")
     stream.close()
+    #print("closed stream")
     p.terminate()
+    #print("terminated")
     #exit()
 
-playFile(FILE2_NAME)
+
+
+def main():
+    ###CHOOSE HERE WHETHER TO RUN AN ORDERED QUERY OR A KEYWORD QUERY, HOW TO RANDOM QUERY?
+    #results = gqlGetLast()
+    #results = gqlGetKeyword()
+    results = gqlGetAll()
+    results = json.loads(results)
+    results = results['data']
+    results = results['allFiles']
+    length = len(results)
+    while True:
+        try:
+            #print("got to while loop")
+            user = input("press ENTER to hear INNERVOICEOVER\n")
+            #randomizer here
+            resultPick = random.randint(1,length-1)
+            result = results[resultPick]
+            FILE2_ID = result['id']
+            FILE2_NAME = result['name']
+            FILE2_URL = result['url']
+            FILE2_TEXT = result['text']
+            gqlMutateText(FILE2_ID)
+            getFile(FILE2_URL, FILE2_NAME)
+            print(FILE2_TEXT)
+            playFile(FILE2_NAME)
+            time.sleep(2)
+        except KeyboardInterrupt:
+            break
+
+main()
 #exit()
+sys.exit()
 
 #exception_on_underflow pyaudio?????
 #num_frames = int(len(frames) / (self._channels * width))
