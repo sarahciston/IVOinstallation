@@ -12,6 +12,7 @@ import webrtcvad
 from halo import Halo
 import deepspeech
 import numpy as np
+import keyboard
 
 logging.basicConfig(level=20)
 
@@ -206,7 +207,9 @@ def listen():
     spinner = None
     wav_data = bytearray()
 
-    user = input("press enter to record INNERVOICEOVER")
+    #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
+    print('touch sensor or press space to hear INNERVOICEOVER\n')
+    keyboard.wait('space') #for makey
     print("Listening...")
     stream_context = model.setupStream()
     # Stream from microphone to DeepSpeech using VAD

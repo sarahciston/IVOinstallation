@@ -7,6 +7,7 @@ from datetime import datetime
 import time
 import random
 import os
+import keyboard
 
 #GraphQL Database
 from graphqlclient import GraphQLClient
@@ -167,7 +168,9 @@ def main():
     while True:
         try:
             #print("got to while loop")
-            user = input("press ENTER to hear INNERVOICEOVER\n")
+            #user = input("press ENTER to hear INNERVOICEOVER\n") #waiting for input here, make a specific key?
+            print('touch sensor or press space to hear INNERVOICEOVER\n')
+            keyboard.wait('space') #for makey
             #randomizer here
             resultPick = random.randint(1,length-1)
             result = results[resultPick]
