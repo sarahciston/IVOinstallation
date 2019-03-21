@@ -169,7 +169,7 @@ def main():
         try:
             #print("got to while loop")
             #user = input("press ENTER to hear INNERVOICEOVER\n") #waiting for input here, make a specific key?
-            print('touch sensor or press space to hear INNERVOICEOVER\n')
+            print('touch sensor or press space to hear INNERVOICEOVER')
             keyboard.wait('space') #for makey
             #randomizer here
             resultPick = random.randint(1,length-1)
@@ -180,7 +180,7 @@ def main():
             FILE2_TEXT = result['text']
             gqlMutateText(FILE2_ID)
             getFile(FILE2_URL, FILE2_NAME)
-            print(FILE2_TEXT)
+            print(FILE2_TEXT + "\n")
             playFile(FILE2_NAME)
             time.sleep(2)
         except KeyboardInterrupt:
