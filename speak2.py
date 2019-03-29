@@ -201,16 +201,17 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
     return result
 
 def listen():
+    #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
+    print('touch sensor or press space to hear INNERVOICEOVER\n')
+    keyboard.wait('space') #for makey
+    print("Listening...")
+
     # Start audio with VAD
     vad_audio = VADAudio(aggressiveness=VAD)
     frames = vad_audio.vad_collector()
     spinner = None
     wav_data = bytearray()
 
-    #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('touch sensor or press space to hear INNERVOICEOVER\n')
-    keyboard.wait('space') #for makey
-    print("Listening...")
     stream_context = model.setupStream()
     # Stream from microphone to DeepSpeech using VAD
     #if not ARGS.nospinner: spinner = Halo(spinner='line')
