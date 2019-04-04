@@ -185,7 +185,7 @@ def main():
                 print(FILE2_TEXT + "\n")
                 playFile(FILE2_NAME)
                 gqlMutateText(FILE2_ID)
-                time.sleep(1)
+                #time.sleep(1)
         except KeyboardInterrupt:
             break
 
