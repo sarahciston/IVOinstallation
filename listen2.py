@@ -154,8 +154,6 @@ def playFile(fname):
     #print("terminated")
     #exit()
 
-
-
 def main():
     ###CHOOSE HERE WHETHER TO RUN AN ORDERED QUERY OR A KEYWORD QUERY, HOW TO RANDOM QUERY?
     #results = gqlGetLast()
@@ -169,20 +167,25 @@ def main():
         try:
             #print("got to while loop")
             #user = input("press ENTER to hear INNERVOICEOVER\n") #waiting for input here, make a specific key?
-            print('touch sensor or press space to hear INNERVOICEOVER')
-            keyboard.wait('space') #for makey
-            #randomizer here
+
+            #randomizer
             resultPick = random.randint(1,length-1)
             result = results[resultPick]
             FILE2_ID = result['id']
             FILE2_NAME = result['name']
             FILE2_URL = result['url']
             FILE2_TEXT = result['text']
-            gqlMutateText(FILE2_ID)
+
             getFile(FILE2_URL, FILE2_NAME)
-            print(FILE2_TEXT + "\n")
-            playFile(FILE2_NAME)
-            time.sleep(2)
+            if os.path.getsize('Play/' + FILE2_NAME) < 200: #checks file size
+                pass #print('too small')
+            else:
+                print('touch sensor or press space to hear INNERVOICEOVER')
+                keyboard.wait('space') #for makey
+                print(FILE2_TEXT + "\n")
+                playFile(FILE2_NAME)
+                gqlMutateText(FILE2_ID)
+                time.sleep(1)
         except KeyboardInterrupt:
             break
 
