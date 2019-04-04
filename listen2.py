@@ -180,7 +180,7 @@ def main():
             if os.path.getsize('Play/' + FILE2_NAME) < 200: #checks file size
                 pass #print('too small')
             else:
-                print('touch sensor or press space to hear INNERVOICEOVER')
+                print('touch both sensors to hear inner(voice)over')
                 keyboard.wait('space') #for makey
                 print(FILE2_TEXT + "\n")
                 playFile(FILE2_NAME)

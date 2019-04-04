@@ -202,7 +202,7 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
 
 def listen():
     #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('touch sensor or press space to hear INNERVOICEOVER\n')
+    print('touch both sensors & speak kind words\n')
     keyboard.wait('space') #for makey
     print("Listening...")
 
