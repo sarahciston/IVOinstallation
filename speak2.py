@@ -202,8 +202,8 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
 
 def listen():
     #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('touch both sensors & speak kind words\n')
-    keyboard.wait('space') #for makey
+    print('step on the mat and speak kind words when prompted\n')
+    keyboard.wait('space')
     print("Listening...")
 
     # Start audio with VAD
