@@ -12,7 +12,6 @@ import webrtcvad
 from halo import Halo
 import deepspeech
 import numpy as np
-import keyboard
 
 logging.basicConfig(level=20)
 
@@ -34,8 +33,6 @@ FILE_URL = ''
 RECORDING = ''
 TEXT = ''
 FILE2_ID = ''
-
-#model = deepspeech.Model(MOD, N_FEATURES, N_CONTEXT, ALPHABET, BEAM_WIDTH)
 
 class Audio(object):
     """Streams raw audio from microphone. Data is received in a separate thread, and stored in a buffer, to be read from."""
@@ -75,7 +72,7 @@ class Audio(object):
     frame_duration_ms = property(lambda self: 1000 * self.block_size // self.sample_rate)
 
     def write_wav(self, filename, data):
-        #logging.info("write wav %s", filename)
+        logging.info("write wav %s", filename)
         wf = wave.open(filename, 'wb')
         wf.setnchannels(self.CHANNELS)
         # wf.setsampwidth(self.pa.get_sample_size(FORMAT))
@@ -135,7 +132,7 @@ def uploadFile(fn):
     r = requests.post(DB_UPLOAD_URL, files=file)
     result = json.loads((r.content).decode()) #converts binary object with all fields to json to dict
     fid = result['id'] #pulls item from dict, no query to gql needed
-    #print('completed upload' + fid)
+    print('completed upload' + fid)
     return fid #pass this to other place by running FILE_ID = uploadFile(FILE_NAME)
 
 #updates DB with STT text field
@@ -156,7 +153,7 @@ def gqlMutateText(fid, txt):
         }
     }
     ''', variables) # , ) do i add variables here, a dictionary/string of them?
-    #print("added text to DB")
+    print("added text to DB")
     #print(result)
     return result
 
@@ -166,7 +163,7 @@ def lyreBird(fid, txt):
     lyreText = {'text': txt}
     r = requests.post(VOICE_URL, data=json.dumps(lyreText), headers={"Authorization": "Bearer oauth_1HESAgpzk8pyDd1grTJPNacB6TQ"})
 
-    #print(r.status_code) ##GETTING 400 BAD REQUEST
+    print(r.status_code) ##GETTING 400 BAD REQUEST
     if r.status_code is 200 or 201:
         with open(FILE2_NAME, "wb") as f:
             f.write(r.content)
@@ -197,24 +194,38 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
         }
     }
     ''', variables)
-    #print(result, ' completed relation')
+    print(result, ' completed relation')
     return result
 
-def listen():
-    #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('step on the mat and speak kind words when prompted\n')
-    keyboard.wait('space')
-    print("Listening...")
+def main():
+    # Load DeepSpeech model
+    '''
+    if os.path.isdir(MOD):
+        model_dir = MOD
+        MOD = os.path.join(model_dir, 'output_graph.pb')
+        ALPHABET = os.path.join(model_dir, ALPHABET if ALPHABET else 'alphabet.txt')
+        LM = os.path.join(model_dir, LM)
+        TRIE = os.path.join(model_dir, TRIE)
+    '''
+    print('Initializing model...')
+    logging.info("model: %s", MOD)
+    logging.info("alphabet: %s", ALPHABET)
+    model = deepspeech.Model(MOD, N_FEATURES, N_CONTEXT, ALPHABET, BEAM_WIDTH)
+    if LM and TRIE:
+        logging.info("LM: %s", LM)
+        logging.info("TRIE: %s", TRIE)
+        model.enableDecoderWithLM(ALPHABET, LM, TRIE, LM_ALPHA, LM_BETA)
 
     # Start audio with VAD
     vad_audio = VADAudio(aggressiveness=VAD)
+    print("Listening (ctrl-C to exit)...")
     frames = vad_audio.vad_collector()
-    spinner = None
-    wav_data = bytearray()
 
-    stream_context = model.setupStream()
     # Stream from microphone to DeepSpeech using VAD
+    spinner = None
     #if not ARGS.nospinner: spinner = Halo(spinner='line')
+    stream_context = model.setupStream()
+    wav_data = bytearray()
     for frame in frames:
         if frame is not None:
             if spinner: spinner.start()
@@ -232,32 +243,10 @@ def listen():
             print("Recognized: %s" % TEXT)
             global FILE_ID
             FILE_ID = uploadFile(FILE_NAME) #added this
+            #print(FILE_ID)
             gqlMutateText(FILE_ID, TEXT)
             lyreBird(FILE_ID, TEXT)
-            #stream_context = model.setupStream()
-            listen()
-
-def main():
-    # Load DeepSpeech model
-    '''
-    if os.path.isdir(MOD):
-        model_dir = MOD
-        MOD = os.path.join(model_dir, 'output_graph.pb')
-        ALPHABET = os.path.join(model_dir, ALPHABET if ALPHABET else 'alphabet.txt')
-        LM = os.path.join(model_dir, LM)
-        TRIE = os.path.join(model_dir, TRIE)
-    '''
-    #print('Initializing model...')
-    logging.info("model: %s", MOD)
-    logging.info("alphabet: %s", ALPHABET)
-    global model
-    model = deepspeech.Model(MOD, N_FEATURES, N_CONTEXT, ALPHABET, BEAM_WIDTH)
-    if LM and TRIE:
-        logging.info("LM: %s", LM)
-        logging.info("TRIE: %s", TRIE)
-        model.enableDecoderWithLM(ALPHABET, LM, TRIE, LM_ALPHA, LM_BETA)
-    listen()
-
+            stream_context = model.setupStream()
 
 if __name__ == '__main__':
     BEAM_WIDTH = 500 #Beam width used in the CTC decoder when building candidate transcriptions. Default: 500

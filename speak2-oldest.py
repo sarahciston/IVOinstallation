@@ -97,7 +97,7 @@ class VADAudio(Audio):
         while True:
             yield self.read()
 
-    def vad_collector(self, padding_ms=300, ratio=0.75, frames=None):
+    def vad_collector(self, padding_ms=500, ratio=0.75, frames=None):
         """Generator that yields series of consecutive audio frames comprising each utterence, separated by yielding a single None.
             Determines voice activity by ratio of frames in padding_ms. Uses a buffer to include padding_ms prior to being triggered.
             Example: (frame, ..., frame, None, frame, ..., frame, None, ...)
@@ -202,16 +202,15 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
 
 def listen():
     #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('Step on the mat. When prompted, speak kind words.\n')
-    keyboard.wait('space')
+    print('touch sensor or press space to hear INNERVOICEOVER\n')
+    keyboard.wait('space') #for makey
     print("Listening...")
-
     # Start audio with VAD
     vad_audio = VADAudio(aggressiveness=VAD)
+    #frames = None #added to clear buffer maybe???
     frames = vad_audio.vad_collector()
     spinner = None
     wav_data = bytearray()
-
     stream_context = model.setupStream()
     # Stream from microphone to DeepSpeech using VAD
     #if not ARGS.nospinner: spinner = Halo(spinner='line')
@@ -234,7 +233,6 @@ def listen():
             FILE_ID = uploadFile(FILE_NAME) #added this
             gqlMutateText(FILE_ID, TEXT)
             lyreBird(FILE_ID, TEXT)
-            #stream_context = model.setupStream()
             listen()
 
 def main():
