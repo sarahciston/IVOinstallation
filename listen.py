@@ -160,6 +160,18 @@ def main():
             #print("got to while loop")
             ###CHOOSE HERE WHETHER TO RUN AN ORDERED QUERY OR A KEYWORD QUERY, HOW TO RANDOM QUERY?
             '''
+            ###VERSION: PLAY 1 ID:
+            results = gqlGetID()
+            results = json.loads(results)
+            results = results['data']
+            result = results['File']
+            #result = result[0]
+            print(result)
+            FILE2_ID = result['id']
+            FILE2_NAME = result['name']
+            FILE2_URL = result['url']
+            FILE2_TEXT = result['text']
+
             ###VERSION: PLAY LAST RECORDED
             #results = gqlGetKeyword()
             results = gqlGetLast()
@@ -177,9 +189,9 @@ def main():
             FILE2_NAME = result['name']
             FILE2_URL = result['url']
             FILE2_TEXT = result['text']
+            '''
 
             ###VERSION: PLAY RANDOM
-            '''
             results = gqlGetAll()
             results = json.loads(results)
             results = results['data']
@@ -198,6 +210,10 @@ def main():
             getFile(FILE2_URL, FILE2_NAME)
             if os.path.getsize('Play/' + FILE2_NAME) < 200: #checks file size
                 pass #print('too small')
+            elif FILE2_TEXT is None:
+                pass
+            elif results is None:
+                pass
             else:
                 #user = input("press ENTER to hear INNERVOICEOVER\n") #waiting for input here, make a specific key?
                 print('Step on the mat to hear inner(voice)over:')

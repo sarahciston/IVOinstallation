@@ -159,28 +159,15 @@ def delete(fid):
     #print(result)
     return result
 
-delete('cjurn16lo0qge0160gez74y24')
-delete('cjurn13z20qgb0160cm8gbht9')
-delete('cjurn0zdh0qg701606ixe5txj')
-delete('cjurn0xan0qg40160u1y7ac4u')
-delete('cjurn0sw30qg00160zozh9brc')
-delete('cjurn0qlv0qfx0160ljblfktu')
-delete('cjurn0lva0qfu0160ljom0jrg')
-delete('cjurn0ipz0qfq0160j7a2nrxu')
-delete('cjurn08qb0qfm016076eqpghj')
-delete('cjurn06fo0qfj0160p7atsj08')
-delete('cjurm0vza0qe40160dpjh2kf4')
-delete('cjurm0tvc0qe101604zeri2ny')
-delete('cjurlwwq00qdp01606buni53r')
-delete('cjurlwv7t0qdm01608ir0sj5w')
-delete('cjurlwo980qdi0160jjwcdh17')
-delete('cjurlwma00qdf01603wx37qj7')
-delete('cjurlwdfz0qdb0160u1h3mx3q')
-delete('cjurlwbag0qd80160r8z6ws7f')
-delete('cjurlvxgw0qd30160nts8lftk')
-delete('cjurlvwid0qd00160bdrw32b3')
-delete('cjurjwng00qcg01601dfm9bbk')
-delete('cjurjwkp10qcd0160kvkdzr8k')
+delete('cjuvci7030smy0160jtkw2y93')
+delete('cjuumvfm50shj01608wmkqrn6')
+delete('cjuumvesz0shg0160p7e0uwam')
+delete('cjuumv7kg0shc0160f4fsfaex')
+delete('cjuumv63k0sh90160zm9ghypj')
+delete('cjuumuzyg0sh50160gnwtuw4o')
+delete('cjuumuz9b0sh20160zfs4dch8')
+
+
 
 #for testing calls
 def gqlQueryPlain():
@@ -271,7 +258,8 @@ def lyreBird(fid, txt):
     else:
         print("status_code error: " + str(r.status_code))
 
-#lyreBird("cjtj0ptzb0f0c0160irxof3et", "you are beautiful dome")
+#lyreBird("cjsva312u08gv0160dkdoq0q5", "is this very king amazing")
+
 
 
 '''
