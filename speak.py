@@ -202,9 +202,9 @@ def gqlSetRelations(FILE2_ID, FILE_ID):
 
 def listen():
     #user = input("press enter to record INNERVOICEOVER") #waiting for input here, make a specific key?
-    print('Step on the mat. When prompted, speak kind words.\n')
+    print("Share a kind thought (something you'd say to a friend) by stepping on the mat and waiting for 'Ready'")
     keyboard.wait('space')
-    print("Listening...")
+    print("Ready to Listen:\n")
 
     # Start audio with VAD
     vad_audio = VADAudio(aggressiveness=VAD)
@@ -229,7 +229,8 @@ def listen():
             vad_audio.write_wav(FILE_NAME, wav_data)
             wav_data = bytearray()
             TEXT = model.finishStream(stream_context)
-            print("Recognized: %s" % TEXT)
+            print("Recognized: %s" % TEXT + "\n")
+            print("Adding your phrase to the compassion database, resetting for the next phrase.")
             global FILE_ID
             FILE_ID = uploadFile(FILE_NAME) #added this
             gqlMutateText(FILE_ID, TEXT)

@@ -2,7 +2,7 @@
   "version": 2,
   "name": "InnerVoiceOver",
   "builds": [
-    { "src": "*.py", "use": "@now/python" },
+    { "src": "*.py", "use": "@now/python", "config": { "maxLambdaSize": "100mb" } },
     { "src": "*.html", "use": "@now/static" }
   ]
 }

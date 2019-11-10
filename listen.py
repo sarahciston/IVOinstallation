@@ -216,7 +216,7 @@ def main():
                 pass
             else:
                 #user = input("press ENTER to hear INNERVOICEOVER\n") #waiting for input here, make a specific key?
-                print('Step on the mat to hear inner(voice)over:')
+                print('Step on the mat to hear a compassionate phrase chosen from the database')
                 keyboard.wait('space') #for makey
                 print(FILE2_TEXT + "\n")
                 playFile(FILE2_NAME)

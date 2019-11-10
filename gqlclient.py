@@ -22,6 +22,15 @@ def saveSpeechFile():
     r = requests.post(DB_UPLOAD_URL, files=file)
     print('completed')
 
+def saveSpeechUrl():
+    headers = { 'Content-Type': 'multipart/form-data' }
+    file = { 'data': 'blob:http://127.0.0.1:8080/eaaf6bc8-8872-4d94-b953-0eeaab84a4b1'}
+    r = requests.post(DB_UPLOAD_URL, files=file, headers=headers)
+    print('completed')
+
+saveSpeechUrl()
+
+
 #STEP 4: this downloads an audio file from the db, after made by TTS presumably
 #will also use in STT to create text, actually
 #pull these var programmatically for each call
@@ -159,13 +168,8 @@ def delete(fid):
     #print(result)
     return result
 
-delete('cjuvci7030smy0160jtkw2y93')
-delete('cjuumvfm50shj01608wmkqrn6')
-delete('cjuumvesz0shg0160p7e0uwam')
-delete('cjuumv7kg0shc0160f4fsfaex')
-delete('cjuumv63k0sh90160zm9ghypj')
-delete('cjuumuzyg0sh50160gnwtuw4o')
-delete('cjuumuz9b0sh20160zfs4dch8')
+#delete('')
+
 
 
 
@@ -258,7 +262,7 @@ def lyreBird(fid, txt):
     else:
         print("status_code error: " + str(r.status_code))
 
-#lyreBird("cjsva312u08gv0160dkdoq0q5", "is this very king amazing")
+#lyreBird("cjux2lou30tnz0160vfhpt1in", "your surrounded with love")
 
 
 
