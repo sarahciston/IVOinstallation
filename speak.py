@@ -230,7 +230,7 @@ def listen():
             wav_data = bytearray()
             TEXT = model.finishStream(stream_context)
             print("Recognized: %s" % TEXT + "\n")
-            print("Adding your phrase to the compassion database, resetting for the next phrase.")
+            print("Adding your phrase to the compassion database, resetting for the next phrase. Please wait.")
             global FILE_ID
             FILE_ID = uploadFile(FILE_NAME) #added this
             gqlMutateText(FILE_ID, TEXT)
